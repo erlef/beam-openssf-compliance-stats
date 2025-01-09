@@ -33,3 +33,6 @@ openssf_compliance-*.tar
 
 # Output Data
 /priv/data/projects/*.parquet
+/priv/data/projects/*.parquet.license
+/priv/data/badge/*.parquet
+/priv/data/badge/*.parquet.license

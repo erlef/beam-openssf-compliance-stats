@@ -30,6 +30,14 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchProjects do
 
     with {:ok, projects} <- read_projects(),
          :ok <- DataFrame.to_parquet(projects, out_path) do
+      # REUSE-IgnoreStart
+      File.write!("#{out_path}.license", """
+      SPDX-FileCopyrightText: 2014-#{Date.utc_today().year} Hex.pm Package Manager
+      SPDX-License-Identifier: CC-BY-3.0
+      """)
+
+      # REUSE-IgnoreEnd
+
       Mix.shell().info("Wrote #{DataFrame.n_rows(projects)} projects to #{inspect(out_path)}")
     else
       error -> Mix.raise("Failed to fetch packages, Error: #{inspect(error, pretty: true)}")

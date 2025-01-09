@@ -8,7 +8,7 @@ defmodule OpenSSFCompliance.Hex do
 
   @type package() :: %{
           name: String.t(),
-          platform: :github | :gitlab | :bitbucket | nil,
+          platform: OpenSSFCompliance.platform() | nil,
           owner: String.t() | nil,
           repository: String.t() | nil,
           total_downloads: non_neg_integer()
@@ -61,9 +61,9 @@ defmodule OpenSSFCompliance.Hex do
       timeout: to_timeout(second: 30)
     )
     |> Stream.transform(1, fn package, acc ->
-      # if rem(acc, 100) == 0 do
-      Logger.info("Fetched #{acc} packages")
-      # end
+      if rem(acc, 100) == 0 do
+        Logger.info("Fetched #{acc} packages")
+      end
 
       {[package], acc + 1}
     end)
@@ -98,15 +98,6 @@ defmodule OpenSSFCompliance.Hex do
   end
 
   @known_bad_hosts ["hex.pm", "hexdocs.pm"]
-  @host_platform_mapping %{
-    "github.com" => :github,
-    "www.github.com" => :github,
-    "gitlab.com" => :gitlab,
-    "www.gitlab.com" => :gitlab,
-    "bitbucket.org" => :bitbucket,
-    "www.bitbucket.org" => :bitbucket
-  }
-  @knwon_good_hosts Map.keys(@host_platform_mapping)
 
   @spec find_package_repository(
           links :: %{optional(String.t()) => String.t()},
@@ -132,22 +123,16 @@ defmodule OpenSSFCompliance.Hex do
     urls
     |> Enum.concat(Map.values(links))
     |> Enum.map(&URI.parse/1)
-    |> Enum.find_value(%{platform: nil, owner: nil, repository: nil}, fn
-      %URI{host: host, path: "/" <> path} when host in @knwon_good_hosts ->
-        case String.split(path, "/", parts: 3) do
-          [owner, repository | _rest] ->
-            %{platform: @host_platform_mapping[host], owner: owner, repository: repository}
+    |> Enum.reject(&match?(%URI{host: host} when host in @known_bad_hosts, &1))
+    |> Enum.find_value(%{platform: nil, owner: nil, repository: nil}, fn uri ->
+      case OpenSSFCompliance.fetch_uri_repository(uri) do
+        :error ->
+          Logger.warning("Unknown URI for package #{inspect(package_name)}: #{inspect(uri)}")
+          false
 
-          _other ->
-            false
-        end
-
-      %URI{host: host} when host in @known_bad_hosts ->
-        false
-
-      other ->
-        Logger.warning("Unknown URI for package #{inspect(package_name)}: #{inspect(other)}")
-        false
+        {:ok, repository} ->
+          repository
+      end
     end)
   end
 
