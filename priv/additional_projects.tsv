@@ -1,0 +1,5 @@
+type	name	platform	owner	repository
+language	Erlang / otp	github	erlang	otp
+language	elixir	github	elixir-lang	elixir
+language	Gleam	github	gleam-lang	gleam
+build_tool	rebar3	github	erlang	rebar3

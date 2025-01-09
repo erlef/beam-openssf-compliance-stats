@@ -12,7 +12,9 @@
         "github.vscode-github-actions",
         "ms-azuretools.vscode-docker",
         "lexical-lsp.lexical",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "mechatroner.rainbow-csv",
+        "AdamViola.parquet-explorer"
       ],
       "settings": {
         "editor.tabSize": 4,

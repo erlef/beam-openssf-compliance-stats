@@ -30,3 +30,6 @@ openssf_compliance-*.tar
 
 # Elixir LS
 /.lexical
+
+# Output Data
+/priv/data/projects/*.parquet
