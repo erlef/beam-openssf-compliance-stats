@@ -28,7 +28,6 @@ defmodule OpenSSFCompliance.Badge do
       Stream.interval(wait_timeout),
       &load_page(&1 + 1),
       ordered: false,
-      max_concurrency: 5,
       timeout: to_timeout(second: 30)
     )
     |> Stream.map(fn {:ok, response} -> response end)

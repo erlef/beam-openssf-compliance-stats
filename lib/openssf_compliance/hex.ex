@@ -57,7 +57,6 @@ defmodule OpenSSFCompliance.Hex do
       throttle(package_names),
       &load_package_details/1,
       ordered: false,
-      max_concurrency: 5,
       timeout: to_timeout(second: 30)
     )
     |> Stream.transform(1, fn package, acc ->

@@ -36,3 +36,5 @@ openssf_compliance-*.tar
 /priv/data/projects/*.parquet.license
 /priv/data/badge/*.parquet
 /priv/data/badge/*.parquet.license
+/priv/data/scorecard/*.parquet
+/priv/data/scorecard/*.parquet.license
