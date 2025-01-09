@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2025 Erlang Ecosystem Foundation
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  devcontainer:
+    build: .
+    volumes:
+      - ..:/workspace
+      - ../.tool-versions:/home/vscode/.tool-versions
+      - asdf-installs:/home/vscode/.asdf/installs
+      - mix-deps:/workspace/deps
+      - mix-build:/workspace/_build
+    command: sleep infinity
+
+volumes:
+  asdf-installs: {}
+  mix-deps: {}
+  mix-build: {}
