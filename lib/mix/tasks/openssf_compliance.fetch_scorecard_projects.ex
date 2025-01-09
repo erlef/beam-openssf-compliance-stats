@@ -66,7 +66,7 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchScoreCardProjects do
     |> Enum.map(&%{&1 | platform: Atom.to_string(&1.platform)})
     |> DataFrame.new(
       dtypes: [
-        {"pplatform", :category},
+        {"platform", :category},
         {"score", {:f, 32}}
       ]
     )

@@ -121,6 +121,7 @@ defmodule OpenSSFCompliance.Hex do
 
     urls
     |> Enum.concat(Map.values(links))
+    |> Enum.map(&String.trim/1)
     |> Enum.map(&URI.parse/1)
     |> Enum.reject(&match?(%URI{host: host} when host in @known_bad_hosts, &1))
     |> Enum.find_value(%{platform: nil, owner: nil, repository: nil}, fn uri ->

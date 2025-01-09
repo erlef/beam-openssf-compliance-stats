@@ -48,14 +48,18 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchBadgeProjects do
 
   defp load_projects do
     Badge.load_projects()
-    |> Enum.map(&%{&1 | platform: Atom.to_string(&1.platform)})
+    |> Enum.map(&%{&1 | platform: platform_to_string(&1.platform)})
     |> DataFrame.new(
       dtypes: [
         {"id", {:u, 64}},
         {"badge_level", :category},
-        {"pplatform", :category},
+        {"platform", :category},
         {"tiered_percentage", {:u, 64}}
       ]
     )
   end
+
+  defp platform_to_string(platform)
+  defp platform_to_string(nil), do: nil
+  defp platform_to_string(platform), do: Atom.to_string(platform)
 end

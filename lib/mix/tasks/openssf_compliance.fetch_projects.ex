@@ -49,7 +49,7 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchProjects do
          {:ok, additional_projects} <- read_additional_projects() do
       {:ok,
        packages
-       |> Enum.map(&Map.merge(&1, %{type: "package", platform: Atom.to_string(&1.platform)}))
+       |> Enum.map(&Map.merge(&1, %{type: "package", platform: platform_to_string(&1.platform)}))
        |> Explorer.DataFrame.new()
        |> DataFrame.concat_rows(additional_projects)
        |> DataFrame.mutate(
@@ -73,4 +73,8 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchProjects do
        )}
     end
   end
+
+  defp platform_to_string(platform)
+  defp platform_to_string(nil), do: nil
+  defp platform_to_string(platform), do: Atom.to_string(platform)
 end
