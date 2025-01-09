@@ -54,6 +54,7 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchScoreCardProjects do
     relevant_projects
     |> DataFrame.drop_nil([:platform, :owner, :repository])
     |> DataFrame.select([:platform, :owner, :repository])
+    |> DataFrame.distinct()
     |> DataFrame.to_rows_stream()
     |> Stream.map(
       &%{
