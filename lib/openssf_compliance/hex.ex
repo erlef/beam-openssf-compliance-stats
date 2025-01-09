@@ -100,8 +100,11 @@ defmodule OpenSSFCompliance.Hex do
   @known_bad_hosts ["hex.pm", "hexdocs.pm"]
   @host_platform_mapping %{
     "github.com" => :github,
+    "www.github.com" => :github,
     "gitlab.com" => :gitlab,
-    "bitbucket.org" => :bitbucket
+    "www.gitlab.com" => :gitlab,
+    "bitbucket.org" => :bitbucket,
+    "www.bitbucket.org" => :bitbucket
   }
   @knwon_good_hosts Map.keys(@host_platform_mapping)
 
