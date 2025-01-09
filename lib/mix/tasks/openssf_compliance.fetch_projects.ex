@@ -13,13 +13,13 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchProjects do
 
   use Mix.Task
 
-  @requirements ["app.start"]
-
   alias Explorer.DataFrame
   alias Explorer.Series
   alias OpenSSFCompliance.Hex
 
   require Explorer.DataFrame
+
+  @requirements ["app.start"]
 
   @impl Mix.Task
   def run([dataset_name]) do
@@ -37,7 +37,7 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchProjects do
   end
 
   defp read_projects do
-    with {:ok, packages} = Hex.load_packages(),
+    with {:ok, packages} <- Hex.load_packages(),
          {:ok, additional_projects} <- read_additional_projects() do
       {:ok,
        packages

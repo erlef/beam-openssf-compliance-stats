@@ -2,5 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [
+  plugins: [Styler],
   inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"]
 ]

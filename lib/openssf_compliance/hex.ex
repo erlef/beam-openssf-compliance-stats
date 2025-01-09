@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule OpenSSFCompliance.Hex do
+  @moduledoc false
+
   require Logger
 
   @type package() :: %{
@@ -18,9 +20,8 @@ defmodule OpenSSFCompliance.Hex do
 
   @spec load_packages() :: {:ok, Enumerable.t(package())} | {:error, term()}
   def load_packages do
-    with {:ok, package_names} <- load_package_names(),
-         {:ok, packages} <- load_all_package_details(package_names) do
-      {:ok, packages}
+    with {:ok, package_names} <- load_package_names() do
+      load_all_package_details(package_names)
     end
   end
 
@@ -83,11 +84,10 @@ defmodule OpenSSFCompliance.Hex do
            "downloads" => %{"all" => total_downloads}
          }} ->
           package =
-            %{
-              name: package_name,
-              total_downloads: total_downloads
-            }
-            |> Map.merge(find_package_repository(links, package_name))
+            Map.merge(
+              %{name: package_name, total_downloads: total_downloads},
+              find_package_repository(links, package_name)
+            )
 
           {:ok, package}
 

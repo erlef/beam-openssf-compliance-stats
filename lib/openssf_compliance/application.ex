@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule OpenSSFCompliance.Application do
+  @moduledoc false
+
   use Application
 
   @impl Application
