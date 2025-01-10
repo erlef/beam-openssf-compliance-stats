@@ -49,3 +49,13 @@ be added to the `priv/additional_projects.tsv` file.
 │$ mix openssf_compliance.stats│
 └──────────────────────────────┘
 ```
+
+## Automated Data Storage
+
+This project automatically fetches new data once a month using the
+[`.github/workflows/calculate_dataset.yml` action](./.github/workflows/calculate_dataset.yml)
+and stores the datasets in git in the[`priv/data/joined` directory](./priv/data/joined).
+
+You can see the recent runs [in the Actions Tab](/actions/workflows/calculate_dataset.yml).
+Each run contains a summary of the new statistics and also offers the intermediate
+files for download.
