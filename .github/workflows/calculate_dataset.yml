@@ -1,0 +1,324 @@
+on:
+  schedule:
+    # Once a month at 15:27 (random time to not congest GitHub exactly at midnight)
+    - cron: "27 15 1 * *"
+  workflow_dispatch:
+    inputs:
+      dataset_name:
+        type: string
+        required: false
+
+name: "Calculate Dataset"
+
+permissions:
+  contents: read
+
+jobs:
+  define_name:
+    name: "Define Dataset Name"
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      dataset_name: "${{ inputs.dataset_name || steps.current-date.outputs.DATASET_NAME }}"
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Get Current Date"
+        id: current-date
+        run: 'echo "DATASET_NAME=$(date --iso-8601)" >> $GITHUB_OUTPUT'
+
+  fetch_projects:
+    name: "Fetch Projects"
+
+    runs-on: ubuntu-latest
+
+    needs: ["define_name"]
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Checkout Code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Setup BEAM"
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        id: setupBEAM
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: "Cache Deps & Build"
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            _build
+            deps
+          key: mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-${{ hashFiles('mix.exs') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-
+
+      - name: "Get Mix Dependencies"
+        run: mix deps.get
+
+      - name: "Compile Project"
+        run: mix compile
+
+      - name: "Fetch Hex.pm Projects"
+        run: mix openssf_compliance.fetch_projects "$DATASET_NAME"
+        env:
+          DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
+          HEX_API_KEY: "${{ secrets.HEX_API_KEY }}"
+
+      - name: "Upload Project Artifact"
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: projects
+          path: priv/data/projects/*
+
+  fetch_badges:
+    name: "Fetch Badges"
+
+    runs-on: ubuntu-latest
+
+    needs: ["define_name"]
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Checkout Code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Setup BEAM"
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        id: setupBEAM
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: "Cache Deps & Build"
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            _build
+            deps
+          key: mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-${{ hashFiles('mix.exs') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-
+
+      - name: "Get Mix Dependencies"
+        run: mix deps.get
+
+      - name: "Compile Project"
+        run: mix compile
+
+      - name: "Fetch Badge Projects"
+        run: mix openssf_compliance.fetch_badge_projects "$DATASET_NAME"
+        env:
+          DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
+
+      - name: "Upload Badge Artifact"
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: badges
+          path: priv/data/badge/*
+
+  fetch_scorecards:
+    name: "Fetch ScoreCards"
+
+    runs-on: ubuntu-latest
+
+    needs: ["define_name", "fetch_projects"]
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Checkout Code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Setup BEAM"
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        id: setupBEAM
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: "Cache Deps & Build"
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            _build
+            deps
+          key: mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-${{ hashFiles('mix.exs') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-
+
+      - name: "Get Mix Dependencies"
+        run: mix deps.get
+
+      - name: "Compile Project"
+        run: mix compile
+
+      - name: "Download Project Artifact"
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: projects
+          path: priv/data/projects/
+
+      - name: "Fetch ScoreCard Projects"
+        run: mix openssf_compliance.fetch_score_card_projects "$DATASET_NAME"
+        env:
+          DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
+
+      - name: "Upload ScoreCard Artifact"
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: scorecards
+          path: priv/data/scorecard/*
+
+  join_projects:
+    name: "Join Data"
+
+    runs-on: ubuntu-latest
+
+    needs: ["define_name", "fetch_projects", "fetch_badges", "fetch_scorecards"]
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Checkout Code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Setup BEAM"
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        id: setupBEAM
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: "Cache Deps & Build"
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            _build
+            deps
+          key: mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-${{ hashFiles('mix.exs') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-
+
+      - name: "Get Mix Dependencies"
+        run: mix deps.get
+
+      - name: "Compile Project"
+        run: mix compile
+
+      - name: "Download Project Artifact"
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: projects
+          path: priv/data/projects/
+
+      - name: "Download Badge Artifact"
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: badges
+          path: priv/data/badge/
+
+      - name: "Download ScoreCard Artifact"
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: scorecards
+          path: priv/data/scorecard/
+
+      - name: "Join Project Data"
+        run: mix openssf_compliance.join_projects "$DATASET_NAME"
+        env:
+          DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
+
+      - name: "Attest data provenance"
+        uses: actions/attest-build-provenance@7668571508540a607bdfd90a87a560489fe372eb # v2.1.0
+        id: attest-docs-provenance
+        with:
+          subject-path: 'priv/data/joined/${{ needs.define_name.outputs.dataset_name }}.parquet*'
+
+      - name: "Upload Joined Artifact"
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: joined
+          path: 'priv/data/joined/${{ needs.define_name.outputs.dataset_name }}.parquet*'
+
+      - name: "Comit new Dataset"
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+        with:
+          commit_message: "Add ${{ needs.define_name.outputs.dataset_name }} DataSet"
+
+  print_stats:
+    name: "Print Stats"
+
+    runs-on: ubuntu-latest
+
+    needs: ["define_name", "join_projects"]
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: "Checkout Code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Setup BEAM"
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        id: setupBEAM
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: "Cache Deps & Build"
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            _build
+            deps
+          key: mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-${{ hashFiles('mix.exs') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.setupBEAM.outputs.otp-version }}-${{ steps.setupBEAM.outputs.elixir-version }}-
+
+      - name: "Get Mix Dependencies"
+        run: mix deps.get
+
+      - name: "Compile Project"
+        run: mix compile
+
+      - name: "Download Joined Artifact"
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: joined
+          path: priv/data/joined/
+
+      - name: "Calculate Stats"
+        run: mix openssf_compliance.stats "$DATASET_NAME" >> $GITHUB_STEP_SUMMARY
+        env:
+          DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"

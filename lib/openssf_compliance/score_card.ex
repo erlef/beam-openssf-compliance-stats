@@ -24,9 +24,11 @@ defmodule OpenSSFCompliance.ScoreCard do
 
   @spec load_projects(projects :: Enumerable.t(input_project())) :: Enumerable.t(project())
   def load_projects(projects) do
+    project_stream = throttle(projects)
+
     OpenSSFCompliance.TaskSupervisor
     |> Task.Supervisor.async_stream(
-      throttle(projects),
+      project_stream,
       &load_project/1,
       ordered: false,
       timeout: to_timeout(second: 30)
