@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Erlang Ecosystem Foundation
+# SPDX-License-Identifier: Apache-2.0
+
 on:
   schedule:
     # Once a month at 15:27 (random time to not congest GitHub exactly at midnight)

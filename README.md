@@ -59,3 +59,10 @@ and stores the datasets in git in the[`priv/data/joined` directory](./priv/data/
 You can see the recent runs [in the Actions Tab](/actions/workflows/calculate_dataset.yml).
 Each run contains a summary of the new statistics and also offers the intermediate
 files for download.
+
+## License
+
+The code in this repository is licensed under the `Apache-2.0` license.
+
+Data produced by the contained commands, are licensed based on their origin. Check
+the `[FILENAME].license` file next to each dataset to see its license.
