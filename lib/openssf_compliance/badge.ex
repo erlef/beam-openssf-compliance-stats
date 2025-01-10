@@ -23,10 +23,15 @@ defmodule OpenSSFCompliance.Badge do
   def load_projects do
     wait_timeout = ceil(@rate_limit_window / @rate_limit_anonymous)
 
+    page_stream =
+      wait_timeout
+      |> Stream.interval()
+      |> Stream.map(&(&1 + 1))
+
     OpenSSFCompliance.TaskSupervisor
     |> Task.Supervisor.async_stream(
-      Stream.interval(wait_timeout),
-      &load_page(&1 + 1),
+      page_stream,
+      &load_page/1,
       ordered: false,
       timeout: to_timeout(second: 30)
     )

@@ -80,11 +80,11 @@ defmodule OpenSSFCompliance.Hex do
         {200, _headers,
          %{
            "meta" => %{"links" => links},
-           "downloads" => %{"all" => total_downloads}
+           "downloads" => downloads
          }} ->
           package =
             Map.merge(
-              %{name: package_name, total_downloads: total_downloads},
+              %{name: package_name, total_downloads: downloads["all"]},
               find_package_repository(links, package_name)
             )
 

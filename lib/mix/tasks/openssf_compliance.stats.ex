@@ -41,15 +41,21 @@ defmodule Mix.Tasks.OpenssfCompliance.Stats do
   defp print_global_stats(projects) do
     project_count = DataFrame.n_rows(projects)
 
-    Mix.shell().info("===================== Hex.pm Packages =====================")
-    Mix.shell().info("#{project_count} Projects")
-
     project_count_mult = 100 / project_count
 
-    projects
-    |> DataFrame.group_by(:platform)
-    |> DataFrame.summarise(count: Series.count(name), percentage: ^project_count_mult * Series.count(name))
-    |> DataFrame.print()
+    pltform_table =
+      projects
+      |> DataFrame.group_by(:platform)
+      |> DataFrame.summarise(count: Series.count(name), percentage: ^project_count_mult * Series.count(name))
+      |> dump_table()
+
+    Mix.shell().info("""
+    # Hex.pm Packages
+
+    `#{project_count}` Projects
+
+    #{pltform_table}
+    """)
   end
 
   defp print_badge_stats(projects) do
@@ -59,26 +65,30 @@ defmodule Mix.Tasks.OpenssfCompliance.Stats do
 
     n_with_badges = DataFrame.n_rows(projects_with_badges)
 
-    Mix.shell().info("===================== Badge =====================")
-
-    Mix.shell().info(
-      "#{n_with_badges} out of #{project_count} projects have a badge (#{inspect(100 / project_count * n_with_badges)}%)"
-    )
-
     arithmetic_mean_percentage = Series.mean(projects_with_badges[:badge_tiered_percentage])
     median_percentage = Series.median(projects_with_badges[:badge_tiered_percentage])
     stdev = Series.standard_deviation(projects_with_badges[:badge_tiered_percentage])
 
-    Mix.shell().info(
-      "Tiered Percentage: Mean #{inspect(arithmetic_mean_percentage)}, Median #{inspect(median_percentage)}, Standard Deviation #{inspect(stdev)}"
-    )
-
     project_count_mult = 100 / project_count
 
-    projects_with_badges
-    |> DataFrame.group_by(:badge_level)
-    |> DataFrame.summarise(count: Series.count(name), percentage: ^project_count_mult * Series.count(name))
-    |> DataFrame.print()
+    badge_level_table =
+      projects_with_badges
+      |> DataFrame.group_by(:badge_level)
+      |> DataFrame.summarise(count: Series.count(name), percentage: ^project_count_mult * Series.count(name))
+      |> dump_table()
+
+    Mix.shell().info("""
+    # Badge
+
+    `#{n_with_badges}` out of `#{project_count}` projects have a badge (`#{inspect(100 / project_count * n_with_badges)}%`)
+
+    Tiered Percentage:
+    * Mean `#{inspect(arithmetic_mean_percentage)}`
+    * Median `#{inspect(median_percentage)}`
+    * Standard Deviation `#{inspect(stdev)}`
+
+    #{badge_level_table}
+    """)
   end
 
   defp print_scorecard_stats(projects) do
@@ -88,18 +98,42 @@ defmodule Mix.Tasks.OpenssfCompliance.Stats do
 
     n_with_scorecards = DataFrame.n_rows(projects_with_scorecards)
 
-    Mix.shell().info("===================== ScoreCard =====================")
-
-    Mix.shell().info(
-      "#{n_with_scorecards} out of #{project_count} projects have a scorecard (#{inspect(100 / project_count * n_with_scorecards)}%)"
-    )
-
     arithmetic_mean_percentage = Series.mean(projects_with_scorecards[:scorecard_score])
     median_percentage = Series.median(projects_with_scorecards[:scorecard_score])
     stdev = Series.standard_deviation(projects_with_scorecards[:scorecard_score])
 
-    Mix.shell().info(
-      "Score: Mean #{inspect(arithmetic_mean_percentage)}, Median #{inspect(median_percentage)}, Standard Deviation #{inspect(stdev)}"
+    Mix.shell().info("""
+    # ScoreCard
+
+    `#{n_with_scorecards}` out of `#{project_count}` projects have a scorecard (`#{inspect(100 / project_count * n_with_scorecards)}%`)
+
+    Score:
+    * Mean `#{inspect(arithmetic_mean_percentage)}`
+    * Median `#{inspect(median_percentage)}`
+    * Standard Deviation `#{inspect(stdev)}`
+    """)
+  end
+
+  defp dump_table(dataframe) do
+    data = [
+      List.duplicate("-", length(dataframe.names))
+      | dataframe
+        |> DataFrame.to_rows()
+        |> Enum.map(fn row ->
+          Enum.map(dataframe.names, &row[&1])
+        end)
+    ]
+
+    data
+    |> TableRex.Table.new(dataframe.names)
+    # TODO: Replace Custom Print Function with `gfm` style once the following
+    # PR is released:
+    # https://github.com/djm/table_rex/pull/59
+    |> TableRex.Table.render!(
+      intersection_symbol: "|",
+      header_separator_symbol: "-",
+      horizontal_style: :off
     )
+    |> String.replace(~r/^\|\s+\|\n/m, "")
   end
 end
