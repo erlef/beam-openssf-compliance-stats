@@ -260,7 +260,7 @@ jobs:
           DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
 
       - name: "Attest data provenance"
-        uses: actions/attest-build-provenance@bd77c077858b8d561b7a36cbe48ef4cc642ca39d # v2.2.2
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         id: attest-docs-provenance
         with:
           subject-path: 'priv/data/joined/${{ needs.define_name.outputs.dataset_name }}.parquet*'
