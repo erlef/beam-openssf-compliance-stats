@@ -25,7 +25,7 @@ defmodule OpenSSFCompliance.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:explorer, "~> 0.10.1"},
+      {:explorer, "~> 0.11.0"},
       {:hex_core, "~> 0.11.0"},
       {:req, "~> 0.5.8"},
       {:styler, "~> 1.2", only: [:dev, :test], runtime: false}
