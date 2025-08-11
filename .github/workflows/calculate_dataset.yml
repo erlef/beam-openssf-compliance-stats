@@ -59,7 +59,7 @@ jobs:
           version-type: strict
 
       - name: "Cache Deps & Build"
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             _build
@@ -110,7 +110,7 @@ jobs:
           version-type: strict
 
       - name: "Cache Deps & Build"
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             _build
@@ -160,7 +160,7 @@ jobs:
           version-type: strict
 
       - name: "Cache Deps & Build"
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             _build
@@ -176,7 +176,7 @@ jobs:
         run: mix compile
 
       - name: "Download Project Artifact"
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: projects
           path: priv/data/projects/
@@ -221,7 +221,7 @@ jobs:
           version-type: strict
 
       - name: "Cache Deps & Build"
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             _build
@@ -237,19 +237,19 @@ jobs:
         run: mix compile
 
       - name: "Download Project Artifact"
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: projects
           path: priv/data/projects/
 
       - name: "Download Badge Artifact"
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: badges
           path: priv/data/badge/
 
       - name: "Download ScoreCard Artifact"
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: scorecards
           path: priv/data/scorecard/
@@ -300,7 +300,7 @@ jobs:
           version-type: strict
 
       - name: "Cache Deps & Build"
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             _build
@@ -316,7 +316,7 @@ jobs:
         run: mix compile
 
       - name: "Download Joined Artifact"
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: joined
           path: priv/data/joined/
