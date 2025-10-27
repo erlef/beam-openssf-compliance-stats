@@ -81,7 +81,7 @@ jobs:
           HEX_API_KEY: "${{ secrets.HEX_API_KEY }}"
 
       - name: "Upload Project Artifact"
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: projects
           path: priv/data/projects/*
@@ -131,7 +131,7 @@ jobs:
           DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
 
       - name: "Upload Badge Artifact"
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: badges
           path: priv/data/badge/*
@@ -176,7 +176,7 @@ jobs:
         run: mix compile
 
       - name: "Download Project Artifact"
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: projects
           path: priv/data/projects/
@@ -187,7 +187,7 @@ jobs:
           DATASET_NAME: "${{ needs.define_name.outputs.dataset_name }}"
 
       - name: "Upload ScoreCard Artifact"
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: scorecards
           path: priv/data/scorecard/*
@@ -237,19 +237,19 @@ jobs:
         run: mix compile
 
       - name: "Download Project Artifact"
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: projects
           path: priv/data/projects/
 
       - name: "Download Badge Artifact"
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: badges
           path: priv/data/badge/
 
       - name: "Download ScoreCard Artifact"
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: scorecards
           path: priv/data/scorecard/
@@ -266,7 +266,7 @@ jobs:
           subject-path: 'priv/data/joined/${{ needs.define_name.outputs.dataset_name }}.parquet*'
 
       - name: "Upload Joined Artifact"
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: joined
           path: 'priv/data/joined/${{ needs.define_name.outputs.dataset_name }}.parquet*'
@@ -316,7 +316,7 @@ jobs:
         run: mix compile
 
       - name: "Download Joined Artifact"
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: joined
           path: priv/data/joined/
