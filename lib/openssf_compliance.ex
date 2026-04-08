@@ -20,13 +20,13 @@ defmodule OpenSSFCompliance do
     "bitbucket.org" => :bitbucket,
     "www.bitbucket.org" => :bitbucket
   }
-  @knwon_good_hosts Map.keys(@host_platform_mapping)
+  @known_good_hosts Map.keys(@host_platform_mapping)
 
-  @spec fetch_uri_repository(url :: Strin.t() | URI.t()) :: {:ok, repository()} | :error
+  @spec fetch_uri_repository(url :: String.t() | URI.t()) :: {:ok, repository()} | :error
   def fetch_uri_repository(uri)
   def fetch_uri_repository(uri) when is_binary(uri), do: uri |> URI.parse() |> fetch_uri_repository()
 
-  def fetch_uri_repository(%URI{host: host, path: "/" <> path}) when host in @knwon_good_hosts do
+  def fetch_uri_repository(%URI{host: host, path: "/" <> path}) when host in @known_good_hosts do
     case String.split(path, "/", parts: 3) do
       [owner, repository | _rest] ->
         {:ok, %{platform: @host_platform_mapping[host], owner: owner, repository: repository}}
