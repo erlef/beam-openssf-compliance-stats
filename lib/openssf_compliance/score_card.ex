@@ -55,7 +55,7 @@ defmodule OpenSSFCompliance.ScoreCard do
   defp load_project(%{platform: platform, owner: owner, repository: repository} = search) do
     platform = @platform_hosts[platform]
 
-    "https://api.securityscorecards.dev/projects/#{platform}/#{owner}/#{repository}"
+    "https://api.securityscorecards.dev/projects/#{platform}/#{URI.encode(owner, &URI.char_unreserved?/1)}/#{URI.encode(repository, &URI.char_unreserved?/1)}"
     |> Req.get!(user_agent: "Beam OpenSSF Compliance Stats <https://github.com/erlef/beam-openssf-compliance-stats>")
     |> case do
       %Req.Response{status: 200, body: %{"score" => score}} -> Map.put(search, :score, score)
