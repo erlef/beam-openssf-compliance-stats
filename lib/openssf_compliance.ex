@@ -4,7 +4,7 @@
 defmodule OpenSSFCompliance do
   @moduledoc false
 
-  @type platform() :: :github | :gitlab | :bitbucke
+  @type platform() :: :github | :gitlab | :bitbucket | :codeberg
 
   @type repository() :: %{
           platform: platform(),
@@ -18,7 +18,8 @@ defmodule OpenSSFCompliance do
     "gitlab.com" => :gitlab,
     "www.gitlab.com" => :gitlab,
     "bitbucket.org" => :bitbucket,
-    "www.bitbucket.org" => :bitbucket
+    "www.bitbucket.org" => :bitbucket,
+    "codeberg.org" => :codeberg
   }
   @known_good_hosts Map.keys(@host_platform_mapping)
 

@@ -102,7 +102,7 @@ defmodule OpenSSFCompliance.Hex do
           links :: %{optional(String.t()) => String.t()},
           package_name :: String.t()
         ) :: %{
-          platform: :github | :gitlab | :other | nil,
+          platform: :github | :gitlab | :codeberg | :other | nil,
           owner: String.t() | nil,
           repository: String.t() | nil
         }

@@ -58,7 +58,7 @@ defmodule Mix.Tasks.OpenssfCompliance.FetchScoreCardProjects do
     |> DataFrame.to_rows_stream()
     |> Stream.map(
       &%{
-        platform: String.to_existing_atom(&1["platform"]),
+        platform: String.to_atom(&1["platform"]),
         owner: &1["owner"],
         repository: &1["repository"]
       }
