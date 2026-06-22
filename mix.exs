@@ -27,7 +27,7 @@ defmodule OpenSSFCompliance.MixProject do
     [
       {:explorer, "~> 0.11.0"},
       {:hex_core, "~> 0.18.0"},
-      {:req, "~> 0.5.8"},
+      {:req, "~> 0.6.2"},
       {:styler, "~> 1.2", only: [:dev, :test], runtime: false}
     ]
   end
